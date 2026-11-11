@@ -227,10 +227,19 @@ body {
     }
 }
 @media (max-width: 560px) {
+    /* Phone: 2 cards per row; the 3rd card of the second grid (Monthly Revenue) sits alone */
     .stat-grid-4,
     .stat-grid-3 {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
     }
+    .stat-grid-3 .stat-card:nth-child(3) { grid-column: 1 / -1; }
+    .stat-card { gap: 10px; }
+    .stat-card > div:not(.stat-icon) { min-width: 0; }
+    .stat-card .stat-icon { width: 40px; height: 40px; font-size: 20px; border-radius: 10px; }
+    .stat-card .stat-value { font-size: 18px; }
+    .stat-card .stat-label { font-size: 12px; }
 }
 .stat-card {
     background: #fff;
@@ -723,7 +732,7 @@ table.data-table .empty-row td {
 }
  
 @media (max-width: 480px) {
-    .stat-card { padding: 14px; }
+    .stat-card { padding: 12px; }
     .panel { padding: 14px; }
     .search-box.open input { width: 100px; }
     .topbar-right { gap: 8px; }
