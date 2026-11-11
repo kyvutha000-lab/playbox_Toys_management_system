@@ -9,10 +9,10 @@
  */
 require_once __DIR__ . '/db.php';
 require_login();
-
+ 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? null;
-
+ 
 if ($method === 'GET') {
     if (!empty($_GET['id'])) {
         $stmt = $pdo->prepare("SELECT s.*, c.full_name AS customer_name, e.full_name AS employee_name
@@ -23,16 +23,16 @@ if ($method === 'GET') {
         $stmt->execute([$_GET['id']]);
         $sale = $stmt->fetch();
         if (!$sale) json_error('Sale not found', 404);
-
+ 
         $items = $pdo->prepare("SELECT si.*, t.name AS toy_name, t.sku
                                  FROM sale_items si JOIN toys t ON si.toy_id = t.id
                                  WHERE si.sale_id = ?");
         $items->execute([$_GET['id']]);
         $sale['items'] = $items->fetchAll();
-
+ 
         json_response(['success' => true, 'data' => $sale]);
     }
-
+ 
     $sql = "SELECT s.*, c.full_name AS customer_name
             FROM sales s LEFT JOIN customers c ON s.customer_id = c.id";
     $params = [];
@@ -46,7 +46,7 @@ if ($method === 'GET') {
     $stmt->execute($params);
     json_response(['success' => true, 'data' => $stmt->fetchAll()]);
 }
-
+ 
 /**
  * Restocks every item belonging to a sale and logs the inventory movement.
  * Used by both plain returns and the first half of an exchange.
@@ -61,7 +61,7 @@ function restock_sale_items(PDO $pdo, int $saleId, string $reason) {
             ->execute([$it['toy_id'], $it['qty'], $reason]);
     }
 }
-
+ 
 /**
  * Core checkout logic shared by a normal sale and the "new" half of an exchange.
  * Returns an array with everything needed for the JSON response.
@@ -71,17 +71,17 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
                            ?string $couponCode, float $discountInput, float $taxRate, int $redeemPoints,
                            ?int $exchangedFromSaleId = null) {
     if (empty($cart)) throw new Exception('Cart is empty');
-
+ 
     $subtotal = 0;
     $lineItems = [];
-
+ 
     foreach ($cart as $ci) {
         $stmt = $pdo->prepare("SELECT * FROM toys WHERE id = ? FOR UPDATE");
         $stmt->execute([$ci['toy_id']]);
         $toy = $stmt->fetch();
         if (!$toy) throw new Exception("Toy not found (id {$ci['toy_id']})");
         if ($toy['stock_qty'] < $ci['qty']) throw new Exception("Not enough stock for {$toy['name']}");
-
+ 
         $lineTotal = $toy['selling_price'] * $ci['qty'];
         $subtotal += $lineTotal;
         $lineItems[] = [
@@ -89,10 +89,10 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
             'price' => $toy['selling_price'], 'subtotal' => $lineTotal,
         ];
     }
-
+ 
     $discount = $discountInput;
     $promoNote = null;
-
+ 
     if ($couponCode) {
         $promo = $pdo->prepare("SELECT * FROM promotions WHERE coupon_code = ? AND status = 'Active'
                                  AND (start_date IS NULL OR start_date <= CURDATE())
@@ -121,7 +121,7 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
             }
         }
     }
-
+ 
     // Loyalty point redemption: 10 points = $1
     $redeemDiscount = 0;
     if ($redeemPoints > 0 && $customerId) {
@@ -133,31 +133,31 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
         $redeemDiscount = $redeemPoints / 10;
         $discount += $redeemDiscount;
     }
-
+ 
     $taxable = max($subtotal - $discount, 0);
     $tax = $taxable * ($taxRate / 100);
     $total = $taxable + $tax;
-
+ 
     $invoiceNo = 'INV-' . date('Ymd') . '-' . str_pad((string)rand(1, 9999), 4, '0', STR_PAD_LEFT);
-
+ 
     $pdo->prepare("INSERT INTO sales (invoice_no, customer_id, employee_id, subtotal, discount, tax, total,
                    payment_method, coupon_code, redeem_points, exchanged_from_sale_id)
                    VALUES (?,?,?,?,?,?,?,?,?,?,?)")
         ->execute([$invoiceNo, $customerId, $employeeId, $subtotal, $discount, $tax, $total,
                    $paymentMethod, $couponCode, $redeemPoints, $exchangedFromSaleId]);
-
+ 
     $saleId = $pdo->lastInsertId();
-
+ 
     foreach ($lineItems as $li) {
         $pdo->prepare("INSERT INTO sale_items (sale_id, toy_id, qty, unit_price, subtotal) VALUES (?,?,?,?,?)")
             ->execute([$saleId, $li['toy_id'], $li['qty'], $li['price'], $li['subtotal']]);
-
+ 
         $pdo->prepare("UPDATE toys SET stock_qty = stock_qty - ? WHERE id = ?")
             ->execute([$li['qty'], $li['toy_id']]);
-
+ 
         $pdo->prepare("INSERT INTO inventory_log (toy_id, type, qty, reason) VALUES (?, 'Stock Out', ?, 'Sale')")
             ->execute([$li['toy_id'], $li['qty']]);
-
+ 
         $t = $pdo->prepare("SELECT stock_qty, low_stock_threshold, name FROM toys WHERE id = ?");
         $t->execute([$li['toy_id']]);
         $trow = $t->fetch();
@@ -169,7 +169,7 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
                 ->execute(["Low stock: {$trow['name']} ({$trow['stock_qty']} left)"]);
         }
     }
-
+ 
     // Net loyalty points: redeem first, then earn 1 point per $10 of the final total.
     if ($customerId) {
         $earned = (int)floor($total / 10);
@@ -177,7 +177,7 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
         $pdo->prepare("UPDATE customers SET loyalty_points = loyalty_points + ? WHERE id = ?")
             ->execute([$net, $customerId]);
     }
-
+ 
     return [
         'invoice_no' => $invoiceNo,
         'sale_id' => $saleId,
@@ -189,13 +189,13 @@ function process_checkout(PDO $pdo, array $cart, $customerId, $employeeId, strin
         'promo_note' => $promoNote,
     ];
 }
-
+ 
 if ($method === 'POST' && $action === 'return') {
     require_role(['Admin','Manager','Cashier']);
     $input = get_input();
     $id = $input['id'] ?? null;
     if (!$id) json_error('id is required');
-
+ 
     $pdo->beginTransaction();
     try {
         restock_sale_items($pdo, (int)$id, 'Sale return');
@@ -207,14 +207,14 @@ if ($method === 'POST' && $action === 'return') {
         json_error('Return failed: ' . $e->getMessage(), 500);
     }
 }
-
+ 
 if ($method === 'POST' && $action === 'exchange') {
     require_role(['Admin','Manager','Cashier']);
     $input = get_input();
     $originalId = $input['original_sale_id'] ?? null;
     $newItems = $input['items'] ?? [];
     if (!$originalId || empty($newItems)) json_error('original_sale_id and items are required');
-
+ 
     $pdo->beginTransaction();
     try {
         $orig = $pdo->prepare("SELECT * FROM sales WHERE id = ?");
@@ -222,18 +222,18 @@ if ($method === 'POST' && $action === 'exchange') {
         $origRow = $orig->fetch();
         if (!$origRow) throw new Exception('Original sale not found');
         if ($origRow['status'] !== 'Completed') throw new Exception('Only completed sales can be exchanged');
-
+ 
         restock_sale_items($pdo, (int)$originalId, 'Exchange - original items returned');
-
+ 
         $result = process_checkout(
             $pdo, $newItems, $origRow['customer_id'], $origRow['employee_id'],
             $input['payment_method'] ?? $origRow['payment_method'], null, 0.0,
             (float)($input['tax_rate'] ?? 10), 0, (int)$originalId
         );
-
+ 
         $pdo->prepare("UPDATE sales SET status = 'Exchanged', exchanged_to_sale_id = ? WHERE id = ?")
             ->execute([$result['sale_id'], $originalId]);
-
+ 
         $pdo->commit();
         json_response(array_merge(['success' => true, 'message' => 'Exchange completed'], $result));
     } catch (Exception $e) {
@@ -241,18 +241,18 @@ if ($method === 'POST' && $action === 'exchange') {
         json_error('Exchange failed: ' . $e->getMessage(), 500);
     }
 }
-
+ 
 if ($method === 'POST' && !$action) {
     require_role(['Admin','Manager','Cashier']);
     $input = get_input();
-
+ 
     $pdo->beginTransaction();
     try {
         $result = process_checkout(
             $pdo,
             $input['items'] ?? [],
-            $input['customer_id'] ?: null,
-            $input['employee_id'] ?: null,
+            ($input['customer_id'] ?? null) ?: null,
+            ($input['employee_id'] ?? null) ?: null,
             $input['payment_method'] ?? 'Cash',
             $input['coupon_code'] ?? null,
             (float)($input['discount'] ?? 0),
@@ -266,5 +266,6 @@ if ($method === 'POST' && !$action) {
         json_error('Checkout failed: ' . $e->getMessage(), 500);
     }
 }
-
+ 
 json_error('Unsupported request', 405);
+ 
