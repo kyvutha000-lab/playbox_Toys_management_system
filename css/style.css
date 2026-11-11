@@ -740,7 +740,7 @@ table.data-table .empty-row td {
 .inv-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .inv-name { flex: 0 0 36%; font-size: 14px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .inv-track { flex: 1; height: 12px; border-radius: 999px; background: rgba(128,128,128,0.25); overflow: hidden; }
-.inv-fill { display: block; height: 100%; border-radius: 999px; background: var(--text-heading); }
+.inv-fill { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
 .inv-fill.is-low { background: var(--warning); }
 .inv-fill.is-out { background: var(--danger); }
 .inv-value { flex: 0 0 auto; min-width: 52px; text-align: right; font-size: 13px; color: var(--text-secondary); }
