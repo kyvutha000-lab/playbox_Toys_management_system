@@ -124,8 +124,8 @@ async function loadCustomers() {
             <td><span class="badge badge-warning">${c.membership_level}</span></td>
             <td class="text-right">${c.loyalty_points}</td>
             <td class="actions">
-                <button class="btn-icon" onclick='openCusModal(${JSON.stringify(c).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteCustomer(${c.id}, '${escapeHtml(c.full_name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openCusModal(${JSON.stringify(c).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${c.id}, ${escapeHtml(JSON.stringify(c.full_name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
