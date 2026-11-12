@@ -65,8 +65,8 @@ async function loadNotifications() {
             <td>${n.created_at}</td>
             <td><span class="badge ${n.is_read == 1 ? 'badge-muted' : 'badge-warning'}">${n.is_read == 1 ? 'Read' : 'Unread'}</span></td>
             <td class="actions">
-                ${n.is_read == 0 ? `<button class="btn-icon" onclick="markRead(${n.id})" title="Mark as read"><ion-icon name="checkmark-outline"></ion-icon></button>` : ''}
-                <button class="btn-icon" onclick="deleteNotif(${n.id})" title="Delete"><ion-icon name="trash-outline"></ion-icon></button>
+                ${n.is_read == 0 ? `<button class="btn btn-outline btn-sm" onclick="markRead(${n.id})" title="Mark as read">Mark read</button>` : ''}
+                <button class="btn btn-danger btn-sm" onclick="deleteNotif(${n.id})" title="Delete">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
