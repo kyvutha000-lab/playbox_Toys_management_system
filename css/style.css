@@ -345,7 +345,11 @@ table.data-table td {
     vertical-align: middle;
 }
 table.data-table tbody tr:hover { background: #fafbff; }
-table.data-table td.actions { display: flex; gap: 8px; }
+table.data-table td.actions { white-space: nowrap; }
+table.data-table td.actions .btn,
+table.data-table td.actions .btn-icon { margin-right: 6px; vertical-align: middle; }
+table.data-table td.actions .btn:last-child,
+table.data-table td.actions .btn-icon:last-child { margin-right: 0; }
 table.data-table .empty-row td {
     text-align: center;
     color: var(--text-muted);
