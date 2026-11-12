@@ -86,8 +86,8 @@ async function loadCategories() {
             <td>${escapeHtml(cat.description || '-')}</td>
             <td class="text-right">${cat.toy_count}</td>
             <td class="actions">
-                <button class="btn-icon" onclick='openCatModal(${JSON.stringify(cat).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteCategory(${cat.id}, '${escapeHtml(cat.name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openCatModal(${JSON.stringify(cat).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCategory(${cat.id}, ${escapeHtml(JSON.stringify(cat.name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
