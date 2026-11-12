@@ -354,7 +354,7 @@ function addExchangeLine() {
       ${allToys.map((t) => `<option value="${t.id}">${escapeHtml(t.name)} - ${formatMoney(t.selling_price)}</option>`).join("")}
     </select>
     <input type="number" class="exch-qty" value="1" min="1" style="width:60px;padding:8px;border-radius:8px;border:1px solid #ddd;">
-    <button type="button" class="btn-icon" onclick="this.closest('div.pos-cart-item').remove();"><ion-icon name="trash-outline"></ion-icon></button>`;
+    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('div.pos-cart-item').remove();">Remove</button>`;
   body.appendChild(row);
 }
 
