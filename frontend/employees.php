@@ -238,7 +238,7 @@ async function loadSchedule() {
             <td>${escapeHtml(s.full_name)}</td>
             <td>${s.day_of_week}</td>
             <td>${s.shift_start} - ${s.shift_end}</td>
-            <td class="actions"><button class="btn-icon" onclick="deleteSchedule(${s.id})"><ion-icon name="trash-outline"></ion-icon></button></td>
+            <td class="actions"><button class="btn btn-danger btn-sm" onclick="deleteSchedule(${s.id})">Delete</button></td>
         </tr>`).join('');
 }
 
@@ -275,8 +275,8 @@ async function loadEmployees() {
             <td>${e.hire_date || '-'}</td>
             <td><span class="badge ${e.status === 'Active' ? 'badge-success' : 'badge-muted'}">${e.status}</span></td>
             <td class="actions">
-                <button class="btn-icon" onclick='openEmpModal(${JSON.stringify(e).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteEmployee(${e.id}, '${escapeHtml(e.full_name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openEmpModal(${JSON.stringify(e).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${e.id}, ${escapeHtml(JSON.stringify(e.full_name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
