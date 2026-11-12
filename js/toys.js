@@ -83,9 +83,9 @@ async function loadToys() {
       <td>${toy.stock_qty}</td>
       <td><span class="badge ${badgeClass}">${toy.status}</span></td>
       <td class="actions">
-        <button class="btn-icon" title="View" onclick='viewToyDetails(${JSON.stringify(toy).replace(/'/g, "&#39;")})'><ion-icon name="eye-outline"></ion-icon></button>
-        <button class="btn-icon" title="Edit" onclick='openToyModal(${JSON.stringify(toy).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-        <button class="btn-icon" title="Delete" onclick="deleteToy(${toy.id}, '${escapeHtml(toy.name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+        <button class="btn btn-outline btn-sm" title="Check" onclick='viewToyDetails(${JSON.stringify(toy).replace(/'/g, "&#39;")})'>Check</button>
+        <button class="btn btn-outline btn-sm" title="Edit" onclick='openToyModal(${JSON.stringify(toy).replace(/'/g, "&#39;")})'>Edit</button>
+        <button class="btn btn-danger btn-sm" title="Delete" onclick="deleteToy(${toy.id}, ${escapeHtml(JSON.stringify(toy.name))})">Delete</button>
       </td>`;
     tbody.appendChild(tr);
   });
