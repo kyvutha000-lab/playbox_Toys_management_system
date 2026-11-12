@@ -86,8 +86,8 @@ async function loadBrands() {
             <td>${escapeHtml(b.description || '-')}</td>
             <td class="text-right">${b.toy_count}</td>
             <td class="actions">
-                <button class="btn-icon" onclick='openBrandModal(${JSON.stringify(b).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteBrand(${b.id}, '${escapeHtml(b.name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openBrandModal(${JSON.stringify(b).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteBrand(${b.id}, ${escapeHtml(JSON.stringify(b.name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
