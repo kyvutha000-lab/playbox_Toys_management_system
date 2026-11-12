@@ -117,8 +117,8 @@ async function loadPromotions() {
             <td>${p.end_date || '-'}</td>
             <td><span class="badge ${badge}">${p.status}</span></td>
             <td class="actions">
-                <button class="btn-icon" onclick='openPromoModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deletePromotion(${p.id}, '${escapeHtml(p.name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openPromoModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deletePromotion(${p.id}, ${escapeHtml(JSON.stringify(p.name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
