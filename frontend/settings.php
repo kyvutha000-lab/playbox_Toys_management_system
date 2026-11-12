@@ -240,8 +240,8 @@ async function loadUsers() {
             <td>${escapeHtml(u.role)}</td>
             <td><span class="badge ${u.status === 'Active' ? 'badge-success' : 'badge-muted'}">${u.status}</span></td>
             <td class="actions">
-                <button class="btn-icon" onclick='openUserModal(${JSON.stringify(u).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteUser(${u.id}, '${escapeHtml(u.username)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, ${escapeHtml(JSON.stringify(u.username))})">Delete</button>
             </td>
         </tr>`).join('');
 }
