@@ -122,8 +122,8 @@ async function loadSuppliers() {
             <td>${escapeHtml(s.email || '-')}</td>
             <td>${escapeHtml(s.address || '-')}</td>
             <td class="actions">
-                <button class="btn-icon" onclick='openSupModal(${JSON.stringify(s).replace(/'/g, "&#39;")})'><ion-icon name="create-outline"></ion-icon></button>
-                <button class="btn-icon" onclick="deleteSupplier(${s.id}, '${escapeHtml(s.name)}')"><ion-icon name="trash-outline"></ion-icon></button>
+                <button class="btn btn-outline btn-sm" onclick='openSupModal(${JSON.stringify(s).replace(/'/g, "&#39;")})'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSupplier(${s.id}, ${escapeHtml(JSON.stringify(s.name))})">Delete</button>
             </td>`;
         tbody.appendChild(tr);
     });
