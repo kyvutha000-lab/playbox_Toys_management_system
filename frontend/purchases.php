@@ -136,7 +136,7 @@ function addPurLine() {
         </td>
         <td><input type="number" class="pur-qty" value="1" min="1"></td>
         <td><input type="number" class="pur-price" step="0.01" value="0"></td>
-        <td><button type="button" class="btn-icon" onclick="this.closest('tr').remove(); recalcPurTotal();"><ion-icon name="trash-outline"></ion-icon></button></td>`;
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); recalcPurTotal();">Remove</button></td>`;
     tbody.appendChild(tr);
 
     const select = tr.querySelector('.pur-toy-select');
